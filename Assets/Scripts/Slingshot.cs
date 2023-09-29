@@ -1,101 +1,125 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Slingshot : MonoBehaviour
 {
-    Rigidbody2D rigid;
-    Vector3 responPos;
+    public LineRenderer[] lineRenderers;
+    public Transform[] stripPositions;
+    public Transform center;
+    public Transform idlePosition;
 
-    Vector2 firstDragPosition; //Drag First Position 
-    Vector2 curDragPosision; //Drag Current Position
+    public Vector3 currentPosition;
 
-    [SerializeField] GameObject particlesPrefab;
+    public float maxLength;
 
-    
-    [SerializeField] float deadY = -16.8f;
+    public float bottomBoundary;
 
-    [SerializeField] float maxForce = 100f; // 최대 힘
-    [SerializeField] float minForce = 1f;  // 최소 힘
+    bool isMouseDown;
 
-    List<SlingshotParticles> parts; 
+    public GameObject songpyoenPrefab;
+
+    public float songpyoenPositionOffset;
+
+    Rigidbody2D songpyoen;
+    Collider2D songpyoenCollider;
+
+    public float force;
+
     void Start()
     {
-        rigid = GetComponent<Rigidbody2D>();
-        responPos = this.gameObject.transform.position;
-        CreateParts();
+        lineRenderers[0].positionCount = 2;
+        lineRenderers[1].positionCount = 2;
+        lineRenderers[0].SetPosition(0, stripPositions[0].position);
+        lineRenderers[1].SetPosition(0, stripPositions[1].position);
+
+        CreateBird();
+    }
+
+    void CreateBird()
+    {
+        songpyoen = Instantiate(songpyoenPrefab).GetComponent<Rigidbody2D>();
+        songpyoenCollider = songpyoen.GetComponent<Collider2D>();
+        songpyoenCollider.enabled = false;
+
+        songpyoen.isKinematic = true;
+
+        ResetStrips();
     }
 
     void Update()
     {
-        if(this.gameObject.transform.position.y < deadY)
+        if (isMouseDown)
         {
-            this.gameObject.transform.position = responPos;
-            Freeze();
-            Invoke("UnFreeze", 0.1f);
-        }    
-    }
+            Vector3 mousePosition = Input.mousePosition;
+            mousePosition.z = 10;
 
-    void CreateParts()
-    {
-        float degree = 0.15f;
-        parts = new List<SlingshotParticles>();
-        for(int i = 0; i < 5; i++)
+            currentPosition = Camera.main.ScreenToWorldPoint(mousePosition);
+            currentPosition = center.position + Vector3.ClampMagnitude(currentPosition
+                - center.position, maxLength);
+
+            currentPosition = ClampBoundary(currentPosition);
+
+            SetStrips(currentPosition);
+
+            if (songpyoenCollider)
+            {
+                songpyoenCollider.enabled = true;
+            }
+        }
+        else
         {
-            GameObject part = Instantiate(particlesPrefab, this.gameObject.transform);
-            SlingshotParticles p = part.GetComponent<SlingshotParticles>();
-            p.SetPosition(this.gameObject.transform.position);
-            //p.ToggleRendererEnabled(false);
-            p.SetOpacity(1 - (degree * (i + 1)));
-            parts.Add(p);
+            ResetStrips();
         }
     }
 
-    void OnMouseDown()
+    private void OnMouseDown()
     {
-        firstDragPosition = Input.mousePosition;
+        isMouseDown = true;
     }
 
-    void OnMouseDrag()
+    private void OnMouseUp()
     {
-        curDragPosision = Input.mousePosition;
-        Debug.Log("------- Position Check -------");
-
+        isMouseDown = false;
+        Shoot();
+        currentPosition = idlePosition.position;
     }
 
-    void OnMouseUp()
+    void Shoot()
     {
-        rigid.AddForce(CalculateForce(), ForceMode2D.Impulse);
+        songpyoen.isKinematic = false;
+        Vector3 birdForce = (currentPosition - center.position) * force * -1;
+        songpyoen.velocity = birdForce;
 
+        songpyoen.GetComponent<Songpyoen>().Release();
 
-        //Release Mouse Positions
-        firstDragPosition = Vector3.zero;
-        curDragPosision = Vector3.zero;
-
+        songpyoen = null;
+        songpyoenCollider = null;
+        Invoke("CreateBird", 2);
     }
 
-    Vector3 CalculateForce()
+    void ResetStrips()
     {
-
-        Vector3 diffVector = firstDragPosition - curDragPosision;
-        float distance = diffVector.magnitude;
-        float clampedForce = Mathf.Clamp(distance, minForce, maxForce);
-        float force = Mathf.Log(distance + 1) * clampedForce; 
-        
-
-        diffVector.Normalize();
-
-        return diffVector * force;
+        currentPosition = idlePosition.position;
+        SetStrips(currentPosition);
     }
 
-    void Freeze()
+    void SetStrips(Vector3 position)
     {
-        rigid.isKinematic = true;
-        rigid.velocity = Vector3.zero;
+        lineRenderers[0].SetPosition(1, position);
+        lineRenderers[1].SetPosition(1, position);
+
+        if (songpyoen)
+        {
+            Vector3 dir = position - center.position;
+            songpyoen.transform.position = position + dir.normalized * songpyoenPositionOffset;
+            songpyoen.transform.right = -dir.normalized;
+        }
     }
 
-    void UnFreeze()
+    Vector3 ClampBoundary(Vector3 vector)
     {
-        rigid.isKinematic = false;
+        vector.y = Mathf.Clamp(vector.y, bottomBoundary, 1000);
+        return vector;
     }
 }
