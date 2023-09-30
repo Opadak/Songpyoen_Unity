@@ -46,6 +46,12 @@ public class Slingshot : MonoBehaviour
 
         ResetStrips();
     }
+    public GameObject CheckSongPyeon()
+    {
+        if (songpyoen != null)
+            return songpyoen.gameObject;
+        return null;
+    }
 
     void Update()
     {
