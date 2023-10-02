@@ -6,6 +6,10 @@ TagManager:
   tags:
   - Wall
   - Map
+  - Icon
+  - Songpyeon
+  - Floor
+  - Persimmon
   layers:
   - Default
   - TransparentFX

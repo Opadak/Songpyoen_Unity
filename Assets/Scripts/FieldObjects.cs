@@ -1,25 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class FieldObjects : MonoBehaviour
 {
-    private List<GameObject> objects;
+    [SerializeField] GameObject objPrefab;
+    [SerializeField] List<GameObject> objects;
+    [SerializeField] List<Vector3> objsPos;
 
     [SerializeField] float destroyCouny = 2.5f;
 
-    void Start()
+    private void Awake()
     {
-        objects = new List<GameObject>();
-        foreach (var arr in GetComponentsInChildren<GameObject>())
+        foreach(var arr in objects)
         {
-
-            objects.Add(arr);
-
+            objsPos.Add(arr.transform.position);
         }
-
     }
-
     void OnDestroy()
     {
         Release();
@@ -38,10 +36,18 @@ public class FieldObjects : MonoBehaviour
 
     public void SetFieldObjActive()
     {
-        foreach(var arr in objects)
+        for(int i = 0; i < objects.Count; i++)
         {
-            if(!arr.activeSelf)
-                arr.SetActive(true);
+            GameObject.Destroy(objects[i]);
+        }
+        objects.Clear();
+
+        objects = new List<GameObject>();
+        for (int i = 0 ; i < objsPos.Count; i++)
+        {
+            GameObject obj = Instantiate(objPrefab,this.gameObject.transform) as GameObject;
+            obj.transform.position = objsPos[i];
+            objects.Add(obj);
         }
     }
 

@@ -6,9 +6,15 @@ public class Persimmon : MonoBehaviour
 {
     public bool collided;
 
+    PathPoints pathPoints;
+
+    void Awake()
+    {
+        pathPoints = FindAnyObjectByType<PathPoints>();
+    }
     public void Release()
     {
-        PathPoints.instance.Clear();
+        pathPoints.Clear();
         StartCoroutine(CreatePathPoints());
     }
 
@@ -17,8 +23,8 @@ public class Persimmon : MonoBehaviour
         while (true)
         {
             if (collided) break;
-            PathPoints.instance.CreateCurrentPathPoint(transform.position);
-            yield return new WaitForSeconds(PathPoints.instance.timeInterval);
+            pathPoints.CreateCurrentPathPoint(transform.position);
+            yield return new WaitForSeconds(pathPoints.timeInterval);
         }
     }
 
@@ -27,9 +33,11 @@ public class Persimmon : MonoBehaviour
         collided = true;
         if (collision.gameObject.CompareTag("Songpyeon"))
         {
-
-
-
+            GameManager.Instance.SetColliderEnterFieldObject(collision.gameObject);
+        }
+        else if (collision.gameObject.CompareTag("Floor"))
+        {
+            GameObject.Destroy(this.gameObject, 3f);
         }
     }
 }

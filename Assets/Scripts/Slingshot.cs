@@ -26,18 +26,21 @@ public class Slingshot : MonoBehaviour
 
     public float force;
 
-    void Start()
+    void Awake()
     {
         lineRenderers[0].positionCount = 2;
         lineRenderers[1].positionCount = 2;
         lineRenderers[0].SetPosition(0, stripPositions[0].position);
         lineRenderers[1].SetPosition(0, stripPositions[1].position);
 
-        CreateBird();
+        CreatePersimmon();
     }
 
-    void CreateBird()
+    public void CreatePersimmon()
     {
+        if (persimmon != null)
+            return;
+
         persimmon = Instantiate(persimmonPrefab).GetComponent<Rigidbody2D>();
         persimmonCollider = persimmon.GetComponent<Collider2D>();
         persimmonCollider.enabled = false;
@@ -101,7 +104,8 @@ public class Slingshot : MonoBehaviour
 
         persimmon = null;
         persimmonCollider = null;
-        Invoke("CreateBird", 2);
+        GameManager.Instance.DeleteIcon();
+        Invoke("CreatePersimmon", 2);
     }
 
     void ResetStrips()

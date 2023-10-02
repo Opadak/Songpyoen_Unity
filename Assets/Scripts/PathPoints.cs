@@ -5,7 +5,6 @@ public class PathPoints : MonoBehaviour
 {
     public GameObject[] pathTemplates;
 
-    public static PathPoints instance;
 
     public List<GameObject> lastPoints;
 
@@ -13,9 +12,8 @@ public class PathPoints : MonoBehaviour
 
     int lastIndex = 0;
 
-    void Start()
+    void Awake()
     {
-        instance = this;
         lastPoints = new List<GameObject>();
     }
 

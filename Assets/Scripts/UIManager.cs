@@ -7,12 +7,19 @@ public class UIManager : MonoBehaviour
 {
 
     [SerializeField] GameObject[] persimmonIcons;
+    int iconCount = 0;
     [SerializeField] TMP_Text songpyeonCountTxt;
     [SerializeField] int songpyeonCount = 5;
+    int curSongpyeonCount;
 
-    void Start()
+    void Awake()
     {
-        
+        if(persimmonIcons == null)
+        {
+            persimmonIcons = GameObject.FindGameObjectsWithTag("Icon");
+        }
+        iconCount = persimmonIcons.Length;
+        curSongpyeonCount = songpyeonCount;
     }
 
     void Update()
@@ -26,21 +33,39 @@ public class UIManager : MonoBehaviour
         {
             arr.SetActive(true);
         }
-        songpyeonCountTxt.text = songpyeonCount + "";
+
+        iconCount = persimmonIcons.Length;
+        curSongpyeonCount = songpyeonCount;
+
+        songpyeonCountTxt.text = curSongpyeonCount + "";
     }
 
 
-    public void ReduceSongPyeon()
+    public bool ReducePersimmonIcons()
     {
-        songpyeonCount--;
-        if(songpyeonCount == 0)
+        iconCount--;
+        if(iconCount == 0)
         {
-            //게임 오버 
+            return true;
+        }
+
+        Debug.Log("Icon Count " + iconCount);
+        persimmonIcons[iconCount].SetActive(false);
+        return false;
+    }
+
+    public bool ReduceSongPyeon()
+    {
+        curSongpyeonCount--;
+        if(curSongpyeonCount <= 0)
+        {
+            return true;
 
         }
         else
         {
-            songpyeonCountTxt.text = songpyeonCount + "";
+            songpyeonCountTxt.text = curSongpyeonCount + "";
+            return false;
         }
     }
 
