@@ -25,5 +25,11 @@ public class Persimmon : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         collided = true;
+        if (collision.gameObject.CompareTag("Songpyeon"))
+        {
+
+
+
+        }
     }
 }
