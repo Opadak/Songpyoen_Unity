@@ -17,12 +17,12 @@ public class Slingshot : MonoBehaviour
 
     bool isMouseDown;
 
-    public GameObject songpyoenPrefab;
+    public GameObject persimmonPrefab;
 
-    public float songpyoenPositionOffset;
+    public float persimmonPositionOffset;
 
-    Rigidbody2D songpyoen;
-    Collider2D songpyoenCollider;
+    Rigidbody2D persimmon;
+    Collider2D persimmonCollider;
 
     public float force;
 
@@ -38,18 +38,18 @@ public class Slingshot : MonoBehaviour
 
     void CreateBird()
     {
-        songpyoen = Instantiate(songpyoenPrefab).GetComponent<Rigidbody2D>();
-        songpyoenCollider = songpyoen.GetComponent<Collider2D>();
-        songpyoenCollider.enabled = false;
+        persimmon = Instantiate(persimmonPrefab).GetComponent<Rigidbody2D>();
+        persimmonCollider = persimmon.GetComponent<Collider2D>();
+        persimmonCollider.enabled = false;
 
-        songpyoen.isKinematic = true;
+        persimmon.isKinematic = true;
 
         ResetStrips();
     }
     public GameObject CheckSongPyeon()
     {
-        if (songpyoen != null)
-            return songpyoen.gameObject;
+        if (persimmon != null)
+            return persimmon.gameObject;
         return null;
     }
 
@@ -68,9 +68,9 @@ public class Slingshot : MonoBehaviour
 
             SetStrips(currentPosition);
 
-            if (songpyoenCollider)
+            if (persimmonCollider)
             {
-                songpyoenCollider.enabled = true;
+                persimmonCollider.enabled = true;
             }
         }
         else
@@ -93,14 +93,14 @@ public class Slingshot : MonoBehaviour
 
     void Shoot()
     {
-        songpyoen.isKinematic = false;
+        persimmon.isKinematic = false;
         Vector3 birdForce = (currentPosition - center.position) * force * -1;
-        songpyoen.velocity = birdForce;
+        persimmon.velocity = birdForce;
 
-        songpyoen.GetComponent<Songpyoen>().Release();
+        persimmon.GetComponent<Persimmon>().Release();
 
-        songpyoen = null;
-        songpyoenCollider = null;
+        persimmon = null;
+        persimmonCollider = null;
         Invoke("CreateBird", 2);
     }
 
@@ -115,11 +115,11 @@ public class Slingshot : MonoBehaviour
         lineRenderers[0].SetPosition(1, position);
         lineRenderers[1].SetPosition(1, position);
 
-        if (songpyoen)
+        if (persimmon)
         {
             Vector3 dir = position - center.position;
-            songpyoen.transform.position = position + dir.normalized * songpyoenPositionOffset;
-            songpyoen.transform.right = -dir.normalized;
+            persimmon.transform.position = position + dir.normalized * persimmonPositionOffset;
+            persimmon.transform.right = -dir.normalized;
         }
     }
 
