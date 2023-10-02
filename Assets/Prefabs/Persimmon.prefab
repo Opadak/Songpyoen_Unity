@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6071866962669289337}
   m_Layer: 0
   m_Name: Persimmon
-  m_TagString: persimmon
+  m_TagString: Persimmon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -26,6 +26,7 @@ public class Slingshot : MonoBehaviour
 
     public float force;
 
+    public bool CanCreate { get; set; }
     void Awake()
     {
         lineRenderers[0].positionCount = 2;
@@ -33,12 +34,13 @@ public class Slingshot : MonoBehaviour
         lineRenderers[0].SetPosition(0, stripPositions[0].position);
         lineRenderers[1].SetPosition(0, stripPositions[1].position);
 
+        CanCreate = true;
         CreatePersimmon();
     }
 
     public void CreatePersimmon()
     {
-        if (persimmon != null)
+        if (persimmon != null || !CanCreate)
             return;
 
         persimmon = Instantiate(persimmonPrefab).GetComponent<Rigidbody2D>();
@@ -49,6 +51,7 @@ public class Slingshot : MonoBehaviour
 
         ResetStrips();
     }
+
     public GameObject CheckSongPyeon()
     {
         if (persimmon != null)
@@ -96,6 +99,8 @@ public class Slingshot : MonoBehaviour
 
     void Shoot()
     {
+        if (persimmon == null)
+            return;
         persimmon.isKinematic = false;
         Vector3 birdForce = (currentPosition - center.position) * force * -1;
         persimmon.velocity = birdForce;

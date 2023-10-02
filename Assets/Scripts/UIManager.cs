@@ -44,23 +44,23 @@ public class UIManager : MonoBehaviour
     public bool ReducePersimmonIcons()
     {
         iconCount--;
-        if(iconCount == 0)
+        persimmonIcons[iconCount].SetActive(false);
+        if (iconCount == 0)
         {
+            FindAnyObjectByType<Slingshot>().CanCreate = false;
             return true;
         }
-
-        Debug.Log("Icon Count " + iconCount);
-        persimmonIcons[iconCount].SetActive(false);
         return false;
     }
 
     public bool ReduceSongPyeon()
     {
         curSongpyeonCount--;
-        if(curSongpyeonCount <= 0)
+        
+        if (curSongpyeonCount <= 0)
         {
+            songpyeonCountTxt.text = "0";
             return true;
-
         }
         else
         {

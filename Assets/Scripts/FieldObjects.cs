@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -23,10 +24,11 @@ public class FieldObjects : MonoBehaviour
         Release();
     }
 
-    public void DistroyFieldObj(GameObject obj)
+    public void DistroyFieldObj(GameObject obj, Vector2 dir)
     {
         GameObject foundObj = objects.Find(item => item == obj);
-
+        foundObj.GetComponent<Rigidbody2D>().AddForce(dir, ForceMode2D.Impulse);
+        foundObj.GetComponent<Animator>().SetBool("FadeOut",true);
         if (foundObj != null)
         {
             objects.Remove(foundObj);

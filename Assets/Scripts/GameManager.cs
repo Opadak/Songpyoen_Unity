@@ -12,7 +12,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] GameObject GamePausePopup;
     [SerializeField] GameObject GameVictoryPopup;
 
-    int perInstance;
+    bool isVictory;
     protected override void Awake()
     {
         base.Awake();
@@ -28,24 +28,17 @@ public class GameManager : Singleton<GameManager>
         GameVictoryPopup.SetActive(false);
     }
 
-    void Update()
+    public void SetColliderEnterFieldObject(GameObject obj, Vector3 dir)
     {
         
-    }
-
-    public void SetColliderEnterFieldObject(GameObject obj)
-    {
-        if(obj.GetInstanceID() != perInstance)
+        isVictory = uiManager.ReduceSongPyeon();
+        if (isVictory)
         {
-           bool isVictory = uiManager.ReduceSongPyeon();
-            if (isVictory)
-            {
-                Invoke("GameVictory", 3f);
-            }
+            Invoke("GameVictory", 3f);
         }
-            
-        fieldObjects.DistroyFieldObj(obj);
-        perInstance = obj.GetInstanceID();
+        
+        Vector2 direction = new Vector2(dir.x * 5f, dir.y * 5f);  
+        fieldObjects.DistroyFieldObj(obj, direction);
     }
 
     public void DeleteIcon()
@@ -64,14 +57,24 @@ public class GameManager : Singleton<GameManager>
     {
         uiManager.SetStart();
         fieldObjects.SetFieldObjActive();
-        FindObjectOfType<Slingshot>().CreatePersimmon();
+        Slingshot slingshot = FindObjectOfType<Slingshot>();
+        slingshot.CanCreate = true;
+        slingshot.CreatePersimmon();
     }
 
 
     public void Pause()
     {
-        Time.timeScale = 0f;
-        GamePausePopup.SetActive(true);
+        if (!GamePausePopup.activeSelf)
+        {
+            Time.timeScale = 0f;
+            GamePausePopup.SetActive(true);
+        }
+        else
+        {
+            Time.timeScale = 1f;
+            GamePausePopup.SetActive(false);
+        }
     }
 
 
@@ -100,7 +103,7 @@ public class GameManager : Singleton<GameManager>
 
     public void GameEnd()
     {
-        if(GameVictoryPopup.activeSelf)
+        if(isVictory)
             return;
         Relese();
         Time.timeScale = 0f;
