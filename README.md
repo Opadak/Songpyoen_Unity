@@ -16,4 +16,4 @@
 </p>
 
 ##[게임 화면]
-![image](https://github.com/Opadak/Songpyoen_Unity\Assets\Res\Graphics\sample\game.png)
+![game](https://github.com/Opadak/Songpyoen_Unity/assets/72779772/0cf2435b-da73-4374-84cf-7a5dcfe5e6fd)
